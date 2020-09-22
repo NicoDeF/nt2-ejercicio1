@@ -4,33 +4,56 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Ejemplo 1</title>
+    <title>TP2 Nico De Filpo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/000000/vue-js.png">
 
 </head>
 
 
 <div class="container-fluid mt-3" id="app">
-    <input type="text" class="form-control" v-model="criterioDeBusqueda" placeholder="Ingresar un criterio de busqueda...">
-    <br>
+    
+            <input type="text" class="form-control" v-model="busquedaXNombre" placeholder="Ingrese nombre.">
+            <div v-if="busquedaXNombre.length<3" class="alert alert-dark">
+                Ingrese mas de 3 letras para la busqueda
+            </div>
+      
+        <br>
+        
+            <input type="text" class="form-control" v-model="busquedaXApellido" placeholder="Ingrese apellido..">
+            <div v-if="busquedaXApellido.length<3" class="alert alert-dark">
+                Ingrese mas de 3 letras para la busqueda
+            </div>
+        
+        <br>
+        
+            <input type="text" class="form-control" v-model="busquedaXDNI" placeholder="Ingrese numero de DNI..">
+            <div v-if="busquedaXDNI.length<3" class="alert alert-dark">
+                Ingrese mas de 3 numeros para la busqueda
+            </div>
+        
+        <br>
+
     <div class="card-deck m-0">
         <div class="row">
-            <div class="col" v-for="persona in personasFiltradas">
-                <div class="card mb-3">
+            <div class="col" v-for="persona in personasFiltradas" v-if = "buscarXApellido(persona)">
+                <div class="card text-white bg-dark mb-3" style="max-width: 20rem;">
                     <div class="card-body">
-                        <h5 class="card-title">{{getNombreCompleto(persona)}}</h5>
-                        <p class="card-text">dni {{persona.dni}}</p>
-                        <a href="#" class="card-link">{{persona.correo}}</a>
+                        <h5 class="card-title"><b>{{getNombreCompleto(persona)}}</b></h5>
+                        <p class="card-text">Nombre: {{persona.nombre}}</p>
+                        <p class="card-text">Apellido: {{persona.apellido}}</p>
+                        <p class="card-text">DNI: {{persona.dni}}</p>
+                        <button type="button" class="btn btn-secondary" href="#!" class="card-link">{{persona.correo}}</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
+
 
 </html>
 
@@ -38,31 +61,57 @@
     new Vue({
         el: '#app',
         data: {
-            criterioDeBusqueda: '',
+            busquedaXNombre: '',
+            busquedaXApellido: '',
+            busquedaXDNI: '',
             //Aquí, en este array es donde tienen que agregar su información
             personas:
                 [
                     { nombre: 'Daniel', apellido: 'Sánchez', dni: 20442873, correo: 'danielsanchez68@hotmail.com' },
                     //Agregar aquí nombre, apellido, dni y correo
-                    { nombre: 'Alan',apellido:'Faerverguer',dni:40829735,correo:'faeralan@gmail.com' },
+                    { nombre: 'Alan', apellido: 'Faerverguer', dni: 40829735, correo: 'faeralan@gmail.com' },
                     { nombre: 'Julián', apellido: 'Brea', dni: 40937404, correo: 'julian.brea@hotmail.com' },
                     { nombre: 'Mauro', apellido: 'Abraham', dni: 37143235, correo: 'maauro.db@gmail.com' },
                     { nombre: 'Pablo Hernan', apellido: 'Aquino', dni: 32123456, correo: 'pablohaquino@gmail.com' },
                     { nombre: 'Marcelo', apellido: 'Rocchi', dni: 32677125, correo: 'marcelorocchi@hotmail.com' },
-                    { nombre: 'Florencia', apellido: 'Garduño', dni: 35805837, correo: 'garduno.florencia@gmail.com' }
+                    { nombre: 'Florencia', apellido: 'Garduño', dni: 35805837, correo: 'garduno.florencia@gmail.com' },
+                    { nombre: 'Nicolas', apellido: 'De Filpo', dni: 33387057, correo: 'nicodf87@gmail.com' },
                 ]
         },
         computed: {
+            
             personasFiltradas() {
-                return this.personas.filter((persona) => {
-                    let registroCompleto = `${persona.nombre}${persona.apellido}${persona.dni}${persona.correo}`
-                    return registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())
-                });
-            }
+                let personasEnBusqueda = this.personas;
+
+                if (this.busquedaXNombre.length >= 3) {
+                    personasEnBusqueda = personasEnBusqueda
+                        .filter(this.buscarXNombre);
+                }
+
+                if (this.busquedaXDNI.length >= 3) {
+                    personasEnBusqueda = personasEnBusqueda
+                        .filter(this.buscarXDni);
+                }
+                
+                return personasEnBusqueda;
+            },
+        
         },
+
         methods: {
             getNombreCompleto(persona) {
-                return `${persona.nombre} ${persona.apellido}`
+                return `${persona.nombre} ${persona.apellido}`;
+            },
+            buscarXNombre(persona){
+                let nombre = `${persona.nombre}`;
+                return nombre.toLowerCase().includes(this.busquedaXNombre.toLowerCase());
+            },
+            buscarXApellido(persona) {
+                let apellido = `${persona.apellido}`;
+                return apellido.toLowerCase().includes(this.busquedaXApellido.toLowerCase());
+            },
+            buscarXDni(persona) {
+                return persona.dni.toString().includes(this.busquedaXDNI.toString());
             }
         }
     });
